@@ -21,7 +21,7 @@ public final class PhoneNumberKit {
 
     // MARK: Lifecycle
 
-    public init(metadataCallback: @escaping MetadataCallback = PhoneNumberKit.defaultMetadataCallback) {
+    public init(metadataCallback: @escaping MetadataCallback = PhoneNumberKit.mainMetadataCallback) {
         self.metadataManager = MetadataManager(metadataCallback: metadataCallback)
         self.parseManager = ParseManager(metadataManager: self.metadataManager, regexManager: self.regexManager)
     }
@@ -322,11 +322,18 @@ public final class PhoneNumberKit {
         return PhoneNumberConstants.defaultCountry
     }
 
-    /// Default metadata callback, reads metadata from PhoneNumberMetadata.json file in bundle
+    /// Module metadata callback, reads metadata from PhoneNumberMetadata.json file in bundle
     ///
     /// - returns: an optional Data representation of the metadata.
-    public static func defaultMetadataCallback() throws -> Data? {
-        let frameworkBundle = Bundle.phoneNumberKit
+    public static func moduleMetadataCallback() throws -> Data? {
+        return try metadataCallback(bundle: Bundle.phoneNumberKit)
+    }
+
+    public static func mainMetadataCallback() throws -> Data? {
+        return try metadataCallback(bundle: Bundle.main)
+    }
+    
+    private static func metadataCallback(bundle frameworkBundle: Bundle) throws -> Data? {
         guard
             let jsonPath = frameworkBundle.path(forResource: "PhoneNumberMetadata", ofType: "json"),
             let handle = FileHandle(forReadingAtPath: jsonPath) else {
