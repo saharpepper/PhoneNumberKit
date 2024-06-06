@@ -21,7 +21,7 @@ public final class PhoneNumberKit {
 
     // MARK: Lifecycle
 
-    public init(metadataCallback: @escaping MetadataCallback = PhoneNumberKit.mainMetadataCallback) {
+    public init(metadataCallback: @escaping MetadataCallback = PhoneNumberKit.localMetadataCallback) {
         self.metadataManager = MetadataManager(metadataCallback: metadataCallback)
         self.parseManager = ParseManager(metadataManager: self.metadataManager, regexManager: self.regexManager)
     }
@@ -329,8 +329,8 @@ public final class PhoneNumberKit {
         return try metadataCallback(bundle: Bundle.phoneNumberKit)
     }
 
-    public static func mainMetadataCallback() throws -> Data? {
-        return try metadataCallback(bundle: Bundle.main)
+    public static func localMetadataCallback() throws -> Data? {
+        return try metadataCallback(bundle: Bundle(for: Self.self))
     }
     
     private static func metadataCallback(bundle frameworkBundle: Bundle) throws -> Data? {
